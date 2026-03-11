@@ -6,11 +6,4 @@
     "size": "2.3 MB",
     "description": "Fast and lightweight browser!"
   }
-  {
-    "name": "VLC",
-    "version": "3.7.0",
-    "url": "https://github.com/BSXLAbS2025/PicoStore-Repo/releases/download/VLC/VLC.apk",
-    "size": "47.6 MB",
-    "description": "VLC is a free and open source cross-platform multimedia player capable of playing most modern multimedia files."
-  }
 ]
