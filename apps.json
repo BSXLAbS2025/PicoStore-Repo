@@ -6,7 +6,7 @@
     "size": "2.3 MB",
     "description": "Fast and lightweight browser!",
     "publisher": "BSX labs",
-    "min_api": "21"
+    "min_api": 21
   },
   {
     "name": "VLC",
@@ -15,6 +15,6 @@
     "size": "47.6 MB",
     "description": "VLC is a free and open source cross-platform multimedia player capable of playing most modern multimedia files.",
     "publisher": "BSX labs",
-    "min_api": "22"
+    "min_api": 22
   }
 ]
