@@ -4,8 +4,8 @@
     "version": "2.1.3",
     "url": "https://github.com/BSXLAbS2025/PicoStore-Repo/releases/download/BrowsyX/browsyx.apk",
     "size": "2.3 MB",
-    "description": "Fast and lightweight browser!"
-    "publisher": "BSX labs"
+    "description": "Fast and lightweight browser!",
+    "publisher": "BSX labs",
     "min_api": "21"
   },
   {
@@ -14,7 +14,7 @@
     "url": "https://github.com/BSXLAbS2025/PicoStore-Repo/releases/download/VLC/VLC.apk",
     "size": "47.6 MB",
     "description": "VLC is a free and open source cross-platform multimedia player capable of playing most modern multimedia files.",
-    "publisher": "BSX labs"
+    "publisher": "BSX labs",
     "min_api": "24"
   }
 ]
