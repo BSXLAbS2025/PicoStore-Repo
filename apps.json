@@ -16,5 +16,14 @@
     "description": "VLC is a free and open source cross-platform multimedia player capable of playing most modern multimedia files.",
     "publisher": "BSX labs",
     "min_api": 22
+  },
+  {
+    "name": "Test",
+    "version": "1.2.3",
+    "url": "",
+    "size": "1.23 MB",
+    "description": "Test?",
+    "publisher": "Test",
+    "min_api": 1
   }
 ]
