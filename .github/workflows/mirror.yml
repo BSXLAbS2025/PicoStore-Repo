@@ -1,11 +1,11 @@
-name: Mirror Sync
+name: Mirror Sync (Gitea, Codeberg, GitLab)
 
 on:
   push:
     branches: [ main, master ]
   delete:
     branches: [ main, master ]
-  workflow_dispatch: # Позволяет запустить синхронизацию вручную кнопкой
+  workflow_dispatch:
 
 jobs:
   mirror_sync:
@@ -23,3 +23,7 @@ jobs:
       - name: Sync to Gitea.com
         run: |
           git push --force --prune https://BSXLAbS2025:${{ secrets.GITEA_TOKEN }}@gitea.com/BSXLAbS2025/PicoStore-Repo.git +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/*
+
+      - name: Sync to GitLab
+        run: |
+          git push --force --prune https://darksoftwarehelp:${{ secrets.GITLAB_TOKEN }}@gitlab.com/darksoftwarehelp/PicoStore-Repo.git +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/*
