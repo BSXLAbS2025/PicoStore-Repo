@@ -1,14 +1,14 @@
-name: Mirror Sync (Gitea, Codeberg, GitLab)
+name: Mirror Sync with Assets
 
 on:
+  release:
+    types: [published, created, edited] # Срабатывает при работе с релизами
   push:
-    branches: [ main, master ]
-  delete:
     branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
-  mirror_sync:
+  sync_code:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -16,14 +16,47 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Sync to Codeberg
+      - name: Sync Git Repos
         run: |
+          # Копируем код и теги во все зеркала
           git push --force --prune https://BSXLABS:${{ secrets.CODEBERG_TOKEN }}@codeberg.org/BSXLABS/PicoStore-Repo.git +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/*
-
-      - name: Sync to Gitea.com
-        run: |
           git push --force --prune https://BSXLAbS2025:${{ secrets.GITEA_TOKEN }}@gitea.com/BSXLAbS2025/PicoStore-Repo.git +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/*
-
-      - name: Sync to GitLab
-        run: |
           git push --force --prune https://darksoftwarehelp:${{ secrets.GITLAB_TOKEN }}@gitlab.com/darksoftwarehelp/PicoStore-Repo.git +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/*
+
+  sync_assets_to_gitlab:
+    needs: sync_code
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Transfer Assets to GitLab
+        env:
+          GL_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+          GL_PROJECT_ID: "darksoftwarehelp/PicoStore-Repo" # Путь к проекту
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          # 1. Получаем список всех файлов из релиза GitHub
+          ASSETS=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG | jq -r '.assets[].browser_download_url')
+          
+          for url in $ASSETS; do
+            filename=$(basename $url)
+            echo "Перенос $filename..."
+            
+            # 2. Скачиваем файл с GitHub
+            curl -L -o "$filename" "$url"
+            
+            # 3. Загружаем файл в GitLab (в Generic Packages или как Link)
+            # Мы используем Package Registry GitLab, так как это самый надежный способ хранения
+            curl --header "PRIVATE-TOKEN: $GL_TOKEN" \
+                 --upload-file "$filename" \
+                 "https://gitlab.com/api/v4/projects/${GL_PROJECT_ID//\//%2F}/packages/generic/picostore/$TAG/$filename"
+            
+            # 4. Создаем ссылку в релизе GitLab на этот файл
+            # (Чтобы файл появился в разделе Releases в UI)
+            DIRECT_URL="https://gitlab.com/api/v4/projects/${GL_PROJECT_ID//\//%2F}/packages/generic/picostore/$TAG/$filename"
+            
+            curl --request POST --header "PRIVATE-TOKEN: $GL_TOKEN" \
+                 "https://gitlab.com/api/v4/projects/${GL_PROJECT_ID//\//%2F}/releases/$TAG/assets/links" \
+                 --data "name=$filename" \
+                 --data "url=$DIRECT_URL" \
+                 --data "link_type=package"
+          done
