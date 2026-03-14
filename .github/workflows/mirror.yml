@@ -1,0 +1,25 @@
+name: Mirror Sync
+
+on:
+  push:
+    branches: [ main, master ]
+  delete:
+    branches: [ main, master ]
+  workflow_dispatch: # Позволяет запустить синхронизацию вручную кнопкой
+
+jobs:
+  mirror_sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync to Codeberg
+        run: |
+          git push --force --prune https://BSXLABS:${{ secrets.CODEBERG_TOKEN }}@codeberg.org/BSXLABS/PicoStore-Repo.git +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/*
+
+      - name: Sync to Gitea.com
+        run: |
+          git push --force --prune https://BSXLAbS2025:${{ secrets.GITEA_TOKEN }}@gitea.com/BSXLAbS2025/PicoStore-Repo.git +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/*
